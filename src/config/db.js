@@ -7,11 +7,8 @@ export async function connectDB() {
     if (!mongoURI) {
       throw new Error('MONGODB_URI is not set in environment variables')
     }
-
-    const connection = await mongoose.connect(mongoURI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    })
+    console.log("MONGODB_URI =", process.env.MONGODB_URI);
+    const connection = await mongoose.connect(mongoURI)
 
     console.log(
       `✓ MongoDB connected: ${connection.connection.host}:${connection.connection.port}/${connection.connection.name}`,
