@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: ledger-mongodb
+    environment:
+      MONGO_INITDB_DATABASE: plan-tracker
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongo-data:/data/db
+    restart: unless-stopped
+
+  # Optional: Mongo Express for GUI access to MongoDB
+  mongo-express:
+    image: mongo-express:latest
+    container_name: ledger-mongo-express
+    environment:
+      ME_CONFIG_MONGODB_URL: mongodb://mongodb:27017
+      ME_CONFIG_MONGODB_ADMINUSERNAME: admin
+      ME_CONFIG_MONGODB_ADMINPASSWORD: password
+    ports:
+      - '8081:8081'
+    depends_on:
+      - mongodb
+    restart: unless-stopped
+
+volumes:
+  mongo-data:
