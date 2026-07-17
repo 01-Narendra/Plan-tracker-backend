@@ -7,7 +7,6 @@ export async function connectDB() {
     if (!mongoURI) {
       throw new Error('MONGODB_URI is not set in environment variables')
     }
-    console.log("MONGODB_URI =", process.env.MONGODB_URI);
     const connection = await mongoose.connect(mongoURI)
 
     console.log(
