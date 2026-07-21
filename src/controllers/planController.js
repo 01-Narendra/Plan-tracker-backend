@@ -8,8 +8,6 @@ import {
 } from '../utils/validation.js'
 import { getEnv } from '../config/env.js'
 
-// Rollover logic: if a recurring plan's lastActiveDate is before today,
-// archive yesterday's final percentage and reset all checkboxes
 async function rolloverPlanIfNeeded(plan) {
   const today = toDateStr()
   if (!plan.recurring || plan.lastActiveDate === today) {
@@ -18,15 +16,24 @@ async function rolloverPlanIfNeeded(plan) {
 
   const percentage = calcPercentage(plan.points)
 
-  // Avoid duplicate history entries
+  // Archive with points snapshot
   const existingIdx = plan.history.findIndex((h) => h.date === plan.lastActiveDate)
-  if (existingIdx >= 0) {
-    plan.history[existingIdx].percentage = percentage
-  } else {
-    plan.history.push({ date: plan.lastActiveDate, percentage })
+  const historyEntry = {
+    date: plan.lastActiveDate,
+    percentage: percentage,
+    points: plan.points.map((p) => ({
+      _id: p._id,
+      text: p.text,
+      done: p.done,
+    })),
   }
 
-  // Reset checkboxes
+  if (existingIdx >= 0) {
+    plan.history[existingIdx] = historyEntry
+  } else {
+    plan.history.push(historyEntry)
+  }
+
   plan.points = plan.points.map((p) => ({ ...p, done: false }))
   plan.lastActiveDate = today
 
