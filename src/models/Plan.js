@@ -32,6 +32,13 @@ const historySchema = new mongoose.Schema(
       max: 100,
       required: true,
     },
+    points: [
+      {
+        _id: String,
+        text: String,
+        done: Boolean,
+      }
+    ],
   },
   { _id: false },
 )
